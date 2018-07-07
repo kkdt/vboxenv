@@ -22,8 +22,21 @@
 # Install global npm modules
 #
 
+echo "Install nodejs/npm"
+curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
+sudo yum -y install nodejs
+
 echo "Installing Node.js module: http-server"
 npm install http-server -g
+
+echo "Installing Angular"
+npm install angular -g
+npm install -g @angular/cli
+
+globalsource=/etc/profile.d/h01.sh
+touch $globalsource
+chmod 755 $globalsource
+echo "alias ngserve='ng serve --host 0.0.0.0'" >> $globalsource
 
 #echo "Installing Node.js module: Connect"
 #npm install connect -g

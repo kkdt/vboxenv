@@ -21,10 +21,10 @@
 
 # Installs to /opt/gradle-{version} and create symbolic link at /opt/gradle.
 # Argument
-#   gradleversion (default to 2.9)
+#   gradleversion (default to 3.5)
 #
 
-gradleversion=2.9
+gradleversion=3.5
 if [ -z "$1" ]; then
   echo "Using default version $gradleversion"
 else
@@ -50,11 +50,11 @@ unzip $downloadLocation/gradle-${gradleversion}-all.zip -d /opt
 echo "Creating symbolic link /opt/gradle"
 ln -s /opt/gradle-${gradleversion} /opt/gradle
 
-globalsource=/etc/bashrc
+globalsource=/etc/profile.d/h01.sh
 touch $globalsource
 echo "Setting up $globalsource for Gradle"
 echo "export GRADLE_HOME=$GRADLE_HOME" >> $globalsource
-echo "export PATH=$GRADLE_HOME/bin:$PATH" >> $globalsource
+echo "export PATH=$""GRADLE_HOME/bin:$""PATH" >> $globalsource
 
 # check installation
 source $globalsource

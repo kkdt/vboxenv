@@ -30,7 +30,17 @@
 # http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz
 #
 
-jdkfile="http://download.oracle.com/otn-pub/java/jdk/8u111-b14/jdk-8u111-linux-x64.tar.gz"
+# Steps to update java
+# 1. Go to the JDK download page
+# 2. Accept the lincense radio button
+# 3. Copy the link to the java tar.gz file
+# 4. Pass the link as the first argument or just update the 'jdkfile' variable below
+
+# below works best
+# wget --header "Cookie: oraclelicense=accept-securebackup-cookie" [link from download page]
+# http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz
+
+jdkfile="http://download.oracle.com/otn-pub/java/jdk/8u171-b11/512cd62ec5174c3487ac17c61aaa89e8/jdk-8u171-linux-x64.tar.gz"
 if [ -z "$1" ]; then
   echo "Using default file $jdkfile"
 else
@@ -42,8 +52,8 @@ mkdir -p $downloadLocation
 JAVA_HOME=/opt/java
 
 echo "Downloading $jdkfile..."
-wget --no-cookies --no-check-certificate \
---header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" \
+wget --no-cookies --header \
+"Cookie: oraclelicense=accept-securebackup-cookie" \
 --directory-prefix=$downloadLocation "$jdkfile" -nv
 
 filename=$(ls $downloadLocation | grep jdk)
@@ -54,10 +64,12 @@ version=$(ls /opt | grep jdk)
 echo "Creating symlink /opt/$version -> $JAVA_HOME"
 ln -s /opt/$version $JAVA_HOME
 
-globalsource=/etc/bashrc
+globalsource=/etc/profile.d/h01.sh
+touch $globalsource
+chmod 755 $globalsource
 echo "Setting up global $globalsource for Java"
 echo "export JAVA_HOME=$JAVA_HOME" >> $globalsource
-echo "export PATH=$JAVA_HOME/bin:$PATH" >> $globalsource
+echo "export PATH=$""JAVA_HOME/bin:$""PATH" >> $globalsource
 
 # check installation
 source $globalsource

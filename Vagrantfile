@@ -54,6 +54,8 @@ Vagrant.configure("2") do |config|
   config.vm.network "forwarded_port", guest: 8087, host: 8007
   config.vm.network "forwarded_port", guest: 8088, host: 8008
   config.vm.network "forwarded_port", guest: 8089, host: 8009
+  # default angular port
+  config.vm.network "forwarded_port", guest: 4200, host: 4200
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
@@ -69,21 +71,21 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
-  config.vm.synced_folder "scripts", "/opt/scripts"
   # TODO: This is specific to my machine
-  config.vm.synced_folder "../projects", "/opt/projects"
+  config.vm.synced_folder ENV['PROJECTSHOME'], "/opt/projects"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
   # Example for VirtualBox:
   #
-  # config.vm.provider "virtualbox" do |vb|
-  #   # Display the VirtualBox GUI when booting the machine
-  #   vb.gui = true
-  #
-  #   # Customize the amount of memory on the VM:
-  #   vb.memory = "1024"
-  # end
+  config.vm.provider "virtualbox" do |vb|
+     # Display the VirtualBox GUI when booting the machine
+     vb.gui = false
+     vb.name = virtualname
+
+     # Customize the amount of memory on the VM:
+     #vb.memory = "1024"
+  end
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -104,10 +106,9 @@ Vagrant.configure("2") do |config|
   # SHELL
   config.vm.provision :shell, path: "scripts/banner.sh", args: ['centos7',virtualname]
   config.vm.provision :shell, path: "scripts/bootstrap.sh", args: [virtualname]
-  config.vm.provision :shell, path: "scripts/yum_devinstalls.sh"
   config.vm.provision :shell, path: "scripts/install_git.sh"
   config.vm.provision :shell, path: "scripts/install_java.sh"
-  config.vm.provision :shell, path: "scripts/install_gradle.sh", args: ['3.3']
+  config.vm.provision :shell, path: "scripts/install_gradle.sh", args: ['3.5']
   config.vm.provision :shell, path: "scripts/install_aws.sh"
   config.vm.provision :shell, path: "scripts/install_node.sh"
 end

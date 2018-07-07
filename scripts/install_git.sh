@@ -31,13 +31,16 @@ fi
 sudo chmod 755 $gitcompletion
 
 gitprompt=$(locate git-prompt.sh)
-if [ -z "$gitcompletion" ]; then
+if [ -z "$gitprompt" ]; then
   echo "git-prompt.sh file not found"
   exit 1
 fi
 sudo chmod 755 $gitprompt
 
-globalsource=/etc/bashrc
+globalsource=/etc/profile.d/h01.sh
+touch $globalsource
+chmod 755 $globalsource
+
 echo "Setting up global git environment"
 echo "source $gitcompletion" >> $globalsource
 echo "source $gitprompt" >> $globalsource

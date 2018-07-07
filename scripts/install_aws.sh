@@ -45,6 +45,8 @@ echo "Installing AWS CLI to /usr/local/aws and /opt/bin/aws"
 $downloadLocation/awscli-bundle/install -i /usr/local/aws -b /opt/bin/aws
 
 # testing out install
-globalsource=/etc/bashrc
+globalsource=/etc/profile.d/h01.sh
+touch $globalsource
+chmod 755 $globalsource
 source $globalsource
 aws --version

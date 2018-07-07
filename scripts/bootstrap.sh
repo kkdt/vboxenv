@@ -52,10 +52,8 @@ echo "Setting up /opt/bin"
 mkdir -p /opt/bin
 chmod 755 /opt/bin
 
+globalsource=/etc/profile.d/h01.sh
 echo "Setting up $globalsource defaults"
-globalsource=/etc/bashrc
 touch $globalsource
-echo "export PATH=/usr/local/bin:/opt/bin:$PATH" >> $globalsource
-
-
-#sudo yum -y install httpd mod_ssl
+chmod 755 $globalsource
+echo "export PATH=/usr/local/bin:/opt/bin:$""PATH" >> $globalsource
