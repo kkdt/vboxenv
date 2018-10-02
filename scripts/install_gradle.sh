@@ -50,7 +50,7 @@ unzip $downloadLocation/gradle-${gradleversion}-all.zip -d /opt
 echo "Creating symbolic link /opt/gradle"
 ln -s /opt/gradle-${gradleversion} /opt/gradle
 
-globalsource=/etc/profile.d/h01.sh
+globalsource=/etc/profile.d/$(hostname -s).sh
 touch $globalsource
 echo "Setting up $globalsource for Gradle"
 echo "export GRADLE_HOME=$GRADLE_HOME" >> $globalsource

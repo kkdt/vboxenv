@@ -24,17 +24,10 @@
 # - install base packages from yum
 #
 
-virtualname=centos7b
-if [ -z "$1" ]; then
-  echo "Using default hostname $virtualname"
-else
-  virtualname="$1"
-fi
-
-echo "Changing hostname to $virtualname"
-sudo hostnamectl set-hostname $virtualname.local
-sudo hostnamectl status
-sudo /etc/init.d/network restart
+#echo "Changing hostname to $virtualname"
+#sudo hostnamectl set-hostname $virtualname.local
+#sudo hostnamectl status
+#sudo /etc/init.d/network restart
 
 #echo "Updating box image"
 #sudo yum -y install
@@ -52,7 +45,7 @@ echo "Setting up /opt/bin"
 mkdir -p /opt/bin
 chmod 755 /opt/bin
 
-globalsource=/etc/profile.d/h01.sh
+globalsource=/etc/profile.d/$(hostname -s).sh
 echo "Setting up $globalsource defaults"
 touch $globalsource
 chmod 755 $globalsource

@@ -64,7 +64,7 @@ version=$(ls /opt | grep jdk)
 echo "Creating symlink /opt/$version -> $JAVA_HOME"
 ln -s /opt/$version $JAVA_HOME
 
-globalsource=/etc/profile.d/h01.sh
+globalsource=/etc/profile.d/$(hostname -s).sh
 touch $globalsource
 chmod 755 $globalsource
 echo "Setting up global $globalsource for Java"

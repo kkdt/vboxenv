@@ -33,7 +33,7 @@ echo "Installing Angular"
 npm install angular -g
 npm install -g @angular/cli
 
-globalsource=/etc/profile.d/h01.sh
+globalsource=/etc/profile.d/$(hostname -s).sh
 touch $globalsource
 chmod 755 $globalsource
 echo "alias ngserve='ng serve --host 0.0.0.0'" >> $globalsource

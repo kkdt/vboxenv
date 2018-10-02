@@ -37,7 +37,7 @@ if [ -z "$gitprompt" ]; then
 fi
 sudo chmod 755 $gitprompt
 
-globalsource=/etc/profile.d/h01.sh
+globalsource=/etc/profile.d/$(hostname -s).sh
 touch $globalsource
 chmod 755 $globalsource
 

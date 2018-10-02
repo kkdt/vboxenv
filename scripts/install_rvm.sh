@@ -14,7 +14,7 @@ curl -sSL https://get.rvm.io | bash -s -- --version $version
 echo "Adding vagrant user to 'rvm' groupd"
 usermod -G rvm vagrant
 
-globalsource=/etc/profile.d/h01.sh
+globalsource=/etc/profile.d/$(hostname -s).sh
 touch $globalsource
 chmod 755 $globalsource
 echo "Setting up global $globalsource for RVM"
