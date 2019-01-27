@@ -30,28 +30,13 @@ Vagrant.configure("2") do |config|
    # For a complete reference, please see the online documentation at
    # https://docs.vagrantup.com.
 
-   # Every Vagrant development environment requires a box. You can search for
-   # boxes at https://atlas.hashicorp.com/search.
    config.vm.box = "geerlingguy/centos7"
+   config.ssh.forward_x11 = true
 
    # Disable automatic box update checking. If you disable this, then
    # boxes will only be checked for updates when the user runs
    # `vagrant box outdated`. This is not recommended.
    # config.vm.box_check_update = false
-
-   # Create a forwarded port mapping which allows access to a specific port
-   # within the machine from a port on the host machine. In the example below,
-   # accessing "localhost:8080" will access port 80 on the guest machine.
-   #config.vm.network "forwarded_port", guest: 8080, host: 8000
-
-   # Create a private network, which allows host-only access to the machine
-   # using a specific IP.
-   # config.vm.network "private_network", ip: "192.168.33.10"
-
-   # Create a public network, which generally matched to bridged network.
-   # Bridged networks make the machine appear as another physical device on
-   # your network.
-   # config.vm.network "public_network"
 
    # Share an additional folder to the guest VM. The first argument is
    # the path on the host to the actual folder. The second argument is
@@ -83,8 +68,9 @@ Vagrant.configure("2") do |config|
       json = (JSON.parse(File.read(file)))['server']
       id = json['id']
       hostname = json['hostname']
-      memory = json['memory']
       network = json['network']
+      memory = json['memory']
+      cpus = json['cpus']
 
       config.vm.define id do |server|
          server.vm.hostname = hostname
@@ -93,8 +79,8 @@ Vagrant.configure("2") do |config|
          server.vm.provider "virtualbox" do |vb|
             vb.gui = false
             vb.name = id
-            # Customize the amount of memory
             vb.memory = memory
+            vb.cpus = cpus
          end
 
          # contains a list of possible bridge adapters and the first one to successfully
