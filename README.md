@@ -8,6 +8,8 @@ Template for projects that utilize Vagrant.
 
 2. Download and install [Vagrant](https://www.vagrantup.com/)
 
+3. Oracle VM VirtualBox Extension Pack
+
 3. Clone/fork this project and navigate into checkout
 
 4. Execute `vagrant status` to see the available VM(s) (the base server is always available)
@@ -32,31 +34,32 @@ Template for projects that utilize Vagrant.
 
 ```JSON
 {
-   "server": {
-      "id" : "h01",
-      "hostname": "h01",
-      "memory": 512,
-      "cpus":1,
-      "network" : {
-         "type" : "private_network",
-         "ip" : "10.10.1.15",
-         "bridge" : [
-            "eth0",
-            "eth1",
-            "eth2",
-            "eth3",
-            "en1: Thunderbolt 1",
-            "en2: Thunderbolt 1",
-            "en0: Wi-Fi (AirPort)"
-         ],
-         "ports" : [
-            {
-               "host": 8080,
-               "guest": 80
-            }
-         ]
-      }
-   }
+    "server": {
+        "id" : "h01",
+        "hostname": "h01",
+        "memory": 512,
+        "cpus":1,
+        "desktop": {
+            "type":"gnome",
+            "display":true
+        },
+        "network" : {
+            "type" : "private_network",
+            "ip" : "10.10.1.15",
+            "bridge" : [
+                "eth0",
+                "eth1",
+                "eth2",
+                "eth3",
+                "en1: Thunderbolt 1",
+                "en2: Thunderbolt 1",
+                "en0: Wi-Fi (AirPort)"
+            ],
+            "ports" : [
+              { "host": 8080, "guest": 80 }
+            ]
+        }
+    }
 }
 ```
 

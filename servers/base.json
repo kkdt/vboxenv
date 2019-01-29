@@ -1,5 +1,6 @@
 {
    "server": {
+      "box":"geerlingguy/centos7",
       "id" : "h01",
       "hostname": "h01",
       "memory": 512,
@@ -17,10 +18,7 @@
             "en0: Wi-Fi (AirPort)"
          ],
          "ports" : [
-            {
-               "host": 8080,
-               "guest": 80
-            }
+            { "host": 8080, "guest": 80 }
          ]
       }
    }

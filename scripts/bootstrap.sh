@@ -30,7 +30,7 @@
 #sudo /etc/init.d/network restart
 
 #echo "Updating box image"
-#sudo yum -y install
+sudo yum -y update
 
 echo "Installing Extra Package for Enterprise Linux (EPEL)"
 sudo yum -y install epel-release
@@ -40,6 +40,12 @@ sudo yum -y install pciutils
 sudo yum -y install policycoreutils policycoreutils-python
 sudo yum -y install wget unzip
 sudo yum -y install mlocate
+sudo yum -y install dkms
+
+#echo "Installing VirtualBox repo"
+#cd /etc/yum.repos.d
+#wget http://download.virtualbox.org/virtualbox/rpm/rhel/virtualbox.repo
+#cd -
 
 echo "Setting up /opt/bin"
 mkdir -p /opt/bin

@@ -1,0 +1,29 @@
+{
+    "server": {
+        "box":"geerlingguy/centos7",
+        "id" : "xfce1",
+        "hostname": "xfce1",
+        "memory": 512,
+        "cpus":1,
+        "desktop": {
+            "type":"xfce",
+            "display":true
+        },
+        "network" : {
+            "type" : "private_network",
+            "ip" : "10.10.1.15",
+            "bridge" : [
+                "eth0",
+                "eth1",
+                "eth2",
+                "eth3",
+                "en1: Thunderbolt 1",
+                "en2: Thunderbolt 1",
+                "en0: Wi-Fi (AirPort)"
+            ],
+            "ports" : [
+                { "host": 8080, "guest": 80 }
+            ]
+        }
+    }
+}
