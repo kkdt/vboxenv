@@ -2,7 +2,7 @@
 
 Template for projects that utilize Vagrant.
 
-## Quickstart
+# Quickstart
 
 1. Download and install [Virtual Box](https://www.virtualbox.org/wiki/VirtualBox)
 
@@ -24,7 +24,7 @@ Template for projects that utilize Vagrant.
     
     b. `/vagrant` is where the checkout is mounted by default, whatever you edit on your host will be reflected on the guest and vice versa 
 
-## Configurations
+# Configurations
 
 1. Vagrant box image provided by [geerlingguy](https://atlas.hashicorp.com/geerlingguy/boxes/centos7)
 
@@ -63,11 +63,45 @@ Template for projects that utilize Vagrant.
 }
 ```
 
-## Scripts
+## Desktop Environment
+
+If you want Vagrant to start up with a Desktop Manager, include the following in your JSON configuration. It currently supports Gnome and Xfce environments.
+
+```json
+"desktop": {
+    "type":"gnome", // gnome|xfce
+    "display":true // true will display the VirtualBox destop immediate on a 'vagrant up'
+}
+```
+
+## AWS Development
+
+Your Vagrant image can be provisioned with the latest AWS CLI and your AWS developer credentials by including the following in your JSON configuration. 
+
+```json
+"aws": {
+    "accessKey": "...", // i.e. the AWS_ACCESS_KEY_ID
+    "accessSecret": "...", // i.e. the AWS_SECRET_ACCESS_KEY
+    "region": "us-east-1"
+}
+```
+
+Once you boot up your Vagrant box, log into and it test out the AWS configuration.
+
+```bash
+[vagrant@h01 ~]$ env | grep -i aws
+AWS_DEFAULT_REGION=us-east-1
+AWS_SECRET_ACCESS_KEY=...
+AWS_ACCESS_KEY_ID=...
+
+```
+
+
+# Scripts
 
 Virtual machine provisioning scripts are located in `scripts`.
 
-## Common Vagrant Commands
+# Common Vagrant Commands
 
 More information can be found in the [Vagrant CLI Documentation](https://www.vagrantup.com/docs/cli/).
 

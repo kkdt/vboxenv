@@ -73,6 +73,7 @@ Vagrant.configure("2") do |config|
         desktop = json.has_key?("desktop") ? json["desktop"] : nil
         gui = !desktop.nil? && desktop.has_key?("display") ? desktop['display'] : false
         desktop_type = !desktop.nil? && desktop.has_key?("type") ? desktop['type'] : "gnome"
+        aws = json.has_key?("aws") ? json["aws"] : nil
 
         config.vm.define id do |server|
             server.vm.box = json.has_key?('box') ? json['box'] : "geerlingguy/centos7"
@@ -88,7 +89,12 @@ Vagrant.configure("2") do |config|
 
             # contains a list of possible bridge adapters and the first one to successfully
             # bridged will be used
-            server.vm.network network['type'], ip: network['ip'], bridge: network['bridge']
+            bridge = network.has_key?("bridge") ? true : false
+            if bridge then
+                server.vm.network network['type'], ip: network['ip'], bridge: network['bridge']
+            else
+                server.vm.network network['type'], ip: network['ip']
+            end
 
             network['ports'].each do |p|
                 server.vm.network "forwarded_port", guest: p['guest'], host: p['host']
@@ -97,6 +103,13 @@ Vagrant.configure("2") do |config|
 
             if !desktop.nil? then
                 server.vm.provision :shell, path: "scripts/install_desktop.sh", args: [ "#{desktop_type}" ]
+            end
+
+            if !aws.nil? then
+                accessKey = aws.has_key?('accessKey') ? aws['accessKey'] : ""
+                accessSecret = aws.has_key?('accessSecret') ? aws['accessSecret'] : ""
+                awsRegion = aws.has_key?('region') ? aws['region'] : ""
+                server.vm.provision :shell, path: "scripts/install_aws.sh", env: { "AWS_ACCESS_KEY_ID" => "#{accessKey}", "AWS_SECRET_ACCESS_KEY" => "#{accessSecret}", "AWS_DEFAULT_REGION" => "#{awsRegion}"}
             end
         end
     end

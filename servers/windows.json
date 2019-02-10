@@ -1,0 +1,16 @@
+{
+  "server": {
+    "box":"geerlingguy/centos7",
+    "id" : "w01",
+    "hostname": "w01",
+    "memory": 256,
+    "cpus":1,
+    "network" : {
+      "type" : "private_network",
+      "ip" : "10.10.1.15",
+      "ports" : [
+        { "host": 8080, "guest": 80 }
+      ]
+    }
+  }
+}

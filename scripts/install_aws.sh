@@ -49,4 +49,11 @@ globalsource=/etc/profile.d/$(hostname -s).sh
 touch $globalsource
 chmod 755 $globalsource
 source $globalsource
+
+# installing aws credentials
+
+echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $globalsource
+echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $globalsource
+echo "export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> $globalsource
+
 aws --version
