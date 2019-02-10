@@ -12,15 +12,6 @@
         "network" : {
             "type" : "private_network",
             "ip" : "10.10.1.15",
-            "bridge" : [
-                "eth0",
-                "eth1",
-                "eth2",
-                "eth3",
-                "en1: Thunderbolt 1",
-                "en2: Thunderbolt 1",
-                "en0: Wi-Fi (AirPort)"
-            ],
             "ports" : [
                 { "host": 8080, "guest": 80 }
             ]
