@@ -1,120 +1,111 @@
 # Vagrant Sandbox
 
-Template for projects that utilize Vagrant.
+> This project is used to build out personal development sandboxes.
 
-# Quickstart
+> If you are using a Windows box, please let me know if you run into any problems.
+
+# Prebuilt Boxes
+
+This project uses [geerlingguy](https://atlas.hashicorp.com/geerlingguy/boxes/centos7) prebuilt CentOS boxes to build out development sandboxes.
+
+| Box                     | Description   | Download                       |
+| ----------------------- | ------------- | ------------------------------ |
+| kkdt.box                | No desktop    | TODO       |
+
+
+# Setting Up Your Development Virtual Machine
 
 1. Download and install [Virtual Box](https://www.virtualbox.org/wiki/VirtualBox)
 
 2. Download and install [Vagrant](https://www.vagrantup.com/)
 
-3. Oracle VM VirtualBox Extension Pack
+3. Install Oracle VM VirtualBox Extension Pack
 
-3. Clone/fork this project and navigate into checkout
+4. Install plugins
 
-4. Execute `vagrant status` to see the available VM(s) (the base server is always available)
+   - Execute: `vagrant plugin install vagrant-vbguest`
 
-5. Execute `vagrant up <vm>` to start the pre-built VM
+   - Execute: `vagrant plugin install vagrant-winnfsd`
 
-6. Execute `vagrant ssh <vm>` to ssh into VM
+5. Install prebuilt boxes
 
-7. Once you are in, you should be logged in as the `vagrant` user (default password is `vagrant`) and you will have 
+   - Download each box from above (or just download the one you want to use)
 
-    a. full sudo to do whatever you need
-    
-    b. `/vagrant` is where the checkout is mounted by default, whatever you edit on your host will be reflected on the guest and vice versa 
+   - Execute: `vagrant box add kkdt kkdt.box`
 
-# Configurations
+# Sandbox JSON Configurations
 
-1. Vagrant box image provided by [geerlingguy](https://atlas.hashicorp.com/geerlingguy/boxes/centos7)
+## Base Configuration
 
-2. Server configurations are json-based (a ton of examples online) - use `servers/base.json` as an example
-
-3. The `id` attribute must be unique within all the json configurations
-
-```JSON
+```json
 {
     "server": {
-        "id" : "h01",
-        "hostname": "h01",
-        "memory": 512,
+        "box":"",
+        "id" : "dev01",
+        "hostname": "dev01",
+        "memory": 2048,
         "cpus":1,
-        "desktop": {
-            "type":"gnome",
-            "display":true
-        },
-        "network" : {
-            "type" : "private_network",
-            "ip" : "10.10.1.15",
-            "bridge" : [
-                "eth0",
-                "eth1",
-                "eth2",
-                "eth3",
-                "en1: Thunderbolt 1",
-                "en2: Thunderbolt 1",
-                "en0: Wi-Fi (AirPort)"
-            ],
-            "ports" : [
-              { "host": 8080, "guest": 80 }
-            ]
-        }
+        "network" : {},
+        "aws":{}
     }
 }
 ```
 
-## Desktop Environment
+## Networking
 
-If you want Vagrant to start up with a Desktop Manager, include the following in your JSON configuration. It currently supports Gnome and Xfce environments.
+Add to the `network` attribute a list of host-guest port forwarding configurations, network type, etc.
 
-```json
-"desktop": {
-    "type":"gnome", // gnome|xfce
-    "display":true // true will display the VirtualBox destop immediate on a 'vagrant up'
+```
+"network" : {
+    "type" : "private_network",
+    "ip" : "10.10.1.150",
+    "bridge" : [
+        "eth0",
+        "eth1",
+        "eth2",
+        "eth3",
+        "en1: Thunderbolt 1",
+        "en2: Thunderbolt 1",
+        "en0: Wi-Fi (AirPort)"
+    ],
+    "ports" : [
+        { "host": 9000, "guest": 19000 },
+        { "host": 9001, "guest": 19001 },
+        { "host": 9002, "guest": 19002 },
+        { "host": 8000, "guest": 3000 },
+        { "host": 9920, "guest": 8920 }
+    ]
 }
 ```
 
-## AWS Development
+## AWS Credentials
 
-Your Vagrant image can be provisioned with the latest AWS CLI and your AWS developer credentials by including the following in your JSON configuration. 
+Include AWS credentials in the JSON configuration and your credentials will be installed as environment variables with the AWS CLI.
 
-```json
+```
 "aws": {
-    "accessKey": "...", // i.e. the AWS_ACCESS_KEY_ID
-    "accessSecret": "...", // i.e. the AWS_SECRET_ACCESS_KEY
+    "accessKey": "....",
+    "accessSecret": "....",
     "region": "us-east-1"
 }
 ```
 
-Once you boot up your Vagrant box, log into and it test out the AWS configuration.
+# Creating the Box Images
 
-```bash
-[vagrant@h01 ~]$ env | grep -i aws
-AWS_DEFAULT_REGION=us-east-1
-AWS_SECRET_ACCESS_KEY=...
-AWS_ACCESS_KEY_ID=...
+Create a box image of the current state of your virtual machine
 
-```
+1. Download the latest Oracle JDK
 
+2. Use `template.json.install` and copy it to `template.json` to use for the install
 
-# Scripts
+3. Update `template.json` (i.e. jdk location, gradle version, etc.)
 
-Virtual machine provisioning scripts are located in `scripts`.
+4. Execute: `vagrant up template --provision-with file,base-install`
 
-# Common Vagrant Commands
+5. Execute: `vagrant package --base template --output kkdt.box`
 
-More information can be found in the [Vagrant CLI Documentation](https://www.vagrantup.com/docs/cli/).
+# Vagrant Commands
 
-| Command                           | Description                     |
-| --------------------------------- | ------------------------------- |
-| `vagrant up`                      | Builds and starts up the Vagrant image   |
-| `vagrant ssh [-- sshOptions]`     | Logs into the Vagrant/VirtualBox environment (single vm)  |
-| `vagrant halt`                    | Gracefully shuts down the virtual machine        |
-| `vagrant destroy [-f]`            | Removes all VirtualBox image files for the environment   |
-| `vagrant box update`              | Manage box images |
-| `vagrant box list`                | Manage box images |
-| `vagrant box remove`              | Manage box images. For example, `vagrant box remove geerlingguy/centos7 --all` then inspect `~/.vagrant.d/boxes` to confirm removal |
+   - `vagrant reload --no-provision`
 
-
-
-> Original project exported from a personal subversion server into a git repository, and pushed to Github.
+   - `vagrant box add c7dev c7dev.box` - Other [Box](https://www.vagrantup.com/docs/cli/box.html) commands

@@ -26,9 +26,6 @@ echo "Install nodejs/npm"
 curl --silent --location https://rpm.nodesource.com/setup_8.x | sudo bash -
 sudo yum -y install nodejs
 
-echo "Installing Node.js module: http-server"
-npm install http-server -g
-
 echo "Installing Angular"
 npm install angular -g
 npm install -g @angular/cli
@@ -38,8 +35,12 @@ touch $globalsource
 chmod 755 $globalsource
 echo "alias ngserve='ng serve --host 0.0.0.0'" >> $globalsource
 
-#echo "Installing Node.js module: Connect"
-#npm install connect -g
+echo "Install packages"
+yum -y install libsass
+npm install -g node-gyp
 
-#echo "Installing Node.js module: ServeStatic"
-#npm install serve-static -g
+npm -g install http-server
+npm -g install connect
+npm -g install serve-static
+npm -g install react-native-cli
+npm -g install expo-cli

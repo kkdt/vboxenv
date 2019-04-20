@@ -29,18 +29,14 @@
 #sudo hostnamectl status
 #sudo /etc/init.d/network restart
 
-#echo "Updating box image"
+echo "Updating box image"
 sudo yum -y update
 
 echo "Installing Extra Package for Enterprise Linux (EPEL)"
 sudo yum -y install epel-release
 
 echo "Installing system utilities"
-sudo yum -y install pciutils
-sudo yum -y install policycoreutils policycoreutils-python
-sudo yum -y install wget unzip
-sudo yum -y install mlocate
-sudo yum -y install dkms
+sudo yum -y install pciutils policycoreutils policycoreutils-python wget unzip mlocate dkms
 
 #echo "Installing VirtualBox repo"
 #cd /etc/yum.repos.d
@@ -52,7 +48,9 @@ mkdir -p /opt/bin
 chmod 755 /opt/bin
 
 globalsource=/etc/profile.d/$(hostname -s).sh
-echo "Setting up $globalsource defaults"
-touch $globalsource
-chmod 755 $globalsource
-echo "export PATH=/usr/local/bin:/opt/bin:$""PATH" >> $globalsource
+if [ ! -f "${globalsource}" ]; then
+    echo "Setting up $globalsource defaults"
+    touch $globalsource
+    chmod 755 $globalsource
+    echo "export PATH=/usr/local/bin:/opt/bin:$""PATH" >> $globalsource
+fi

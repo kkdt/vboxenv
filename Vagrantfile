@@ -26,11 +26,15 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
-    # The most common configuration options are documented and commented below.
-    # For a complete reference, please see the online documentation at
-    # https://docs.vagrantup.com.
+
+    puts "---------------------------------"
+    puts "Vagrant Sandbox"
+    puts "---------------------------------"
+    puts ""
 
     config.ssh.forward_x11 = true
+    config.ssh.insert_key = false
+    config.ssh.keep_alive = true
 
     # Disable automatic box update checking. If you disable this, then
     # boxes will only be checked for updates when the user runs
@@ -70,10 +74,13 @@ Vagrant.configure("2") do |config|
         network = json['network']
         memory = json['memory']
         cpus = json['cpus']
+        
         desktop = json.has_key?("desktop") ? json["desktop"] : nil
         gui = !desktop.nil? && desktop.has_key?("display") ? desktop['display'] : false
         desktop_type = !desktop.nil? && desktop.has_key?("type") ? desktop['type'] : "gnome"
         aws = json.has_key?("aws") ? json["aws"] : nil
+        jdk = json.has_key?("jdk") ? json["jdk"] : ""
+        gradleversion = json.has_key?("gradleversion") ? json["gradleversion"] : "4.0"
 
         config.vm.define id do |server|
             server.vm.box = json.has_key?('box') ? json['box'] : "geerlingguy/centos7"
@@ -92,26 +99,44 @@ Vagrant.configure("2") do |config|
             bridge = network.has_key?("bridge") ? true : false
             if bridge then
                 server.vm.network network['type'], ip: network['ip'], bridge: network['bridge']
-            else
+            elsif network.has_key?("type") && network.has_key?("ip")
                 server.vm.network network['type'], ip: network['ip']
             end
 
-            network['ports'].each do |p|
-                server.vm.network "forwarded_port", guest: p['guest'], host: p['host']
+            if network.has_key?("ports") then
+                network['ports'].each do |p|
+                    server.vm.network "forwarded_port", guest: p['guest'], host: p['host']
+                end
             end
-            server.vm.provision :shell, path: "scripts/bootstrap.sh"
 
-            if !desktop.nil? then
-                server.vm.provision :shell, path: "scripts/install_desktop.sh", args: [ "#{desktop_type}" ]
+            # stage the jdk file to /home/vagrant/jdk.rpm
+            unless jdk.empty?
+                server.vm.provision "file", source: "#{jdk}", destination: "jdk.rpm"
             end
 
             if !aws.nil? then
                 accessKey = aws.has_key?('accessKey') ? aws['accessKey'] : ""
                 accessSecret = aws.has_key?('accessSecret') ? aws['accessSecret'] : ""
                 awsRegion = aws.has_key?('region') ? aws['region'] : ""
-                server.vm.provision :shell, path: "scripts/install_aws.sh", env: { "AWS_ACCESS_KEY_ID" => "#{accessKey}", "AWS_SECRET_ACCESS_KEY" => "#{accessSecret}", "AWS_DEFAULT_REGION" => "#{awsRegion}"}
+                server.vm.provision "aws", type: "shell", path: "scripts/install_aws.sh", env: { "AWS_ACCESS_KEY_ID" => "#{accessKey}", "AWS_SECRET_ACCESS_KEY" => "#{accessSecret}", "AWS_DEFAULT_REGION" => "#{awsRegion}"}
+            end
+
+            server.vm.provision "base-install", run: "never", type: "shell", env: { "VAGRANT_GRADLE_VERSION" => "#{gradleversion}" }, args: [], inline: <<-SHELL
+                /bin/bash /vagrant/scripts/bootstrap.sh
+                /bin/bash /vagrant/scripts/install_git.sh
+                if [ -f "/home/vagrant/jdk.rpm" ]; then
+                    /bin/bash /vagrant/scripts/install_jdk.sh "/home/vagrant/jdk.rpm"
+                    /bin/bash /vagrant/scripts/install_gradle.sh "${VAGRANT_GRADLE_VERSION}"
+                fi
+                /bin/bash /vagrant/scripts/install_node.sh
+                /bin/bash /vagrant/scripts/install_yarn.sh
+            SHELL
+
+            if !desktop.nil? && desktop["install"] == true then
+                server.vm.provision "desktop", type: "shell", path: "scripts/install_desktop.sh", args: [ "#{desktop_type}" ]
             end
         end
+
     end
 
 end

@@ -55,5 +55,6 @@ source $globalsource
 echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $globalsource
 echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $globalsource
 echo "export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> $globalsource
+echo "export AWS_REGION=${AWS_DEFAULT_REGION}" >> $globalsource
 
 aws --version

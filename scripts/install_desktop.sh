@@ -15,6 +15,7 @@ function install_desktop() {
     "gnome")
         yum -y install gnome-classic-session gnome-terminal nautilus-open-terminal control-center liberation-mono-fonts gdm
         systemctl enable gdm
+        yum -y groupinstall fonts
         ;;
     *)
         echo "Unknown desktop: $1"
@@ -22,6 +23,8 @@ function install_desktop() {
 
     systemctl isolate graphical.target
     systemctl set-default graphical.target
+
+    sudo yum -y install firefox
 }
 
 if [ ! -z "${1}" ]; then

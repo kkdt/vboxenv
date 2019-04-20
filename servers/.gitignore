@@ -1,0 +1,4 @@
+# All .json files will be ignored so avoid accidental checkin to git
+#-------------------------------------------------------------------
+
+*.json
