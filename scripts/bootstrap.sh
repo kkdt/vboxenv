@@ -36,7 +36,13 @@ echo "Installing Extra Package for Enterprise Linux (EPEL)"
 sudo yum -y install epel-release
 
 echo "Installing system utilities"
-sudo yum -y install pciutils policycoreutils policycoreutils-python wget unzip mlocate dkms
+sudo yum -y install pciutils policycoreutils policycoreutils-python wget unzip mlocate dkms fontconfig gcc-c++
+
+yum list installed | grep "mariadb-libs" 2>&1
+if [ $? -eq 0 ]; then
+    echo "Removing mariadb-lib"
+    yum -y remove mariadb-libs.x86_64
+fi
 
 #echo "Installing VirtualBox repo"
 #cd /etc/yum.repos.d

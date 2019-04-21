@@ -67,23 +67,28 @@ Vagrant.configure("2") do |config|
     #config.vm.provision :shell, path: "scripts/install_aws.sh"
     #config.vm.provision :shell, path: "scripts/install_node.sh"
 
+    config.vm.provision "shell", inline: <<-SHELL
+        yum -y remove mariadb-libs.x86_64
+    SHELL
+
     Dir.glob('servers/*.json') do |file|
         json = (JSON.parse(File.read(file)))['server']
-        id = json['id']
-        hostname = json['hostname']
-        network = json['network']
-        memory = json['memory']
-        cpus = json['cpus']
-        
+        id = json.has_key?("id") ? json["id"] : "vagrant"
+        network = hostname = json.has_key?("network") ? json["network"] : {}
+        hostname = json.has_key?("hostname") ? json["hostname"] : "vagrant"
+        memory = json.has_key?("memory") ? json["memory"] : 512
+        cpus = json.has_key?("cpus") ? json["cpus"] : 1
         desktop = json.has_key?("desktop") ? json["desktop"] : nil
         gui = !desktop.nil? && desktop.has_key?("display") ? desktop['display'] : false
         desktop_type = !desktop.nil? && desktop.has_key?("type") ? desktop['type'] : "gnome"
         aws = json.has_key?("aws") ? json["aws"] : nil
         jdk = json.has_key?("jdk") ? json["jdk"] : ""
         gradleversion = json.has_key?("gradleversion") ? json["gradleversion"] : "4.0"
+        rpms = json.has_key?("rpms") ? json["rpms"] : []
+        hosts = json.has_key?("hosts") ? json["hosts"] : []
 
         config.vm.define id do |server|
-            server.vm.box = json.has_key?('box') ? json['box'] : "geerlingguy/centos7"
+            server.vm.box = json.has_key?('box') ? json['box'] : "kkdt/c7dev"
             server.vm.hostname = hostname
             server.vm.define id
 
@@ -109,6 +114,14 @@ Vagrant.configure("2") do |config|
                 end
             end
 
+            hosts.each do |h|
+                hostname = h["hostname"]
+                ip = h["ip"]
+                server.vm.provision "hosts", type: "shell", args: [ hostname, ip ], inline: <<-SHELL
+                    echo "$2 $1 $1" >> /etc/hosts
+                SHELL
+            end
+
             # stage the jdk file to /home/vagrant/jdk.rpm
             unless jdk.empty?
                 server.vm.provision "file", source: "#{jdk}", destination: "jdk.rpm"
@@ -130,6 +143,25 @@ Vagrant.configure("2") do |config|
                 fi
                 /bin/bash /vagrant/scripts/install_node.sh
                 /bin/bash /vagrant/scripts/install_yarn.sh
+                yum install -y maven
+            SHELL
+
+            rpmid=1
+            rpms.each do |rpm|
+                # stage all rpm files
+                filename = File.basename("#{rpm}")
+                server.vm.provision "file", source: "#{rpm}", destination: "/tmp/#{rpmid}-#{filename}"
+                rpmid = rpmid + 1
+            end
+
+            server.vm.provision "rpms", type: "shell", inline: <<-SHELL
+                for r in $(ls /tmp/*.rpm 2>/dev/null)
+                do
+                    echo "Installing ${r}"
+                    rpm -Uvh ${r}
+                    echo "Removing ${r}"
+                    rm -f ${r}
+                done
             SHELL
 
             if !desktop.nil? && desktop["install"] == true then

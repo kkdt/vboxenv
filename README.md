@@ -6,14 +6,9 @@
 
 # Prebuilt Boxes
 
-This project uses [geerlingguy](https://atlas.hashicorp.com/geerlingguy/boxes/centos7) prebuilt CentOS boxes to build out development sandboxes.
+This project uses [geerlingguy](https://app.vagrantup.com/geerlingguy/boxes/centos7) prebuilt CentOS boxes to build out boxes in [kkdt](https://app.vagrantup.com/kkdt).
 
-| Box                     | Description   | Download                       |
-| ----------------------- | ------------- | ------------------------------ |
-| kkdt.box                | No desktop    | TODO       |
-
-
-# Setting Up Your Development Virtual Machine
+# Quick Start
 
 1. Download and install [Virtual Box](https://www.virtualbox.org/wiki/VirtualBox)
 
@@ -27,11 +22,17 @@ This project uses [geerlingguy](https://atlas.hashicorp.com/geerlingguy/boxes/ce
 
    - Execute: `vagrant plugin install vagrant-winnfsd`
 
-5. Install prebuilt boxes
+5. Drop a JSON file in `servers` directory with the falling minimum contents (box and unique VM identifier) to use the default VM configurations. More information on the JSON configurations in the following section.
 
-   - Download each box from above (or just download the one you want to use)
+    dev01.json
 
-   - Execute: `vagrant box add kkdt kkdt.box`
+   ```json
+   {
+       "server": {
+           "id" : "dev01"
+       }
+   }
+   ```
 
 # Sandbox JSON Configurations
 
@@ -42,11 +43,13 @@ This project uses [geerlingguy](https://atlas.hashicorp.com/geerlingguy/boxes/ce
     "server": {
         "box":"",
         "id" : "dev01",
-        "hostname": "dev01",
-        "memory": 2048,
-        "cpus":1,
+        "hostname" : "dev01",
+        "memory" : 2048,
+        "cpus" : 1,
         "network" : {},
-        "aws":{}
+        "hosts" : [],
+        "aws" : {},
+        "rpms" : []
     }
 }
 ```
@@ -78,6 +81,17 @@ Add to the `network` attribute a list of host-guest port forwarding configuratio
 }
 ```
 
+## Configuring /etc/hosts
+
+Add to the `hosts` attribute a list of other Vagrant virtual machines to connect them. The example below allows the current Vagrant machine to have visibility to two other Vagrant machines - qrmi2 and qrmi3.
+
+```
+"hosts": [
+    {"hostname":"qrmi2", "ip":"10.10.1.2"},
+    {"hostname":"qrmi3", "ip":"10.10.1.3"}
+]
+```
+
 ## AWS Credentials
 
 Include AWS credentials in the JSON configuration and your credentials will be installed as environment variables with the AWS CLI.
@@ -90,6 +104,19 @@ Include AWS credentials in the JSON configuration and your credentials will be i
 }
 ```
 
+## Installing RPMs
+
+RPM files listed under the `rpms` attribute will be installed during a Vagrant up in the order they are specified. All files will be placed in the `/tmp` directory in the VM and removed after installation.
+
+```
+"rpms": [
+    "/Users/thinh/Downloads/mysql-community-common-5.7.18-1.el7.x86_64.rpm",
+    "/Users/thinh/Downloads/mysql-community-libs-5.7.18-1.el7.x86_64.rpm",
+    "/Users/thinh/Downloads/mysql-community-client-5.7.18-1.el7.x86_64.rpm",
+    "/Users/thinh/Downloads/mysql-community-server-5.7.18-1.el7.x86_64.rpm"
+]
+```
+
 # Creating the Box Images
 
 Create a box image of the current state of your virtual machine
@@ -100,7 +127,7 @@ Create a box image of the current state of your virtual machine
 
 3. Update `template.json` (i.e. jdk location, gradle version, etc.)
 
-4. Execute: `vagrant up template --provision-with file,base-install`
+4. Execute: `vagrant up template --provision-with file,base-install[,rpms]`
 
 5. Execute: `vagrant package --base template --output kkdt.box`
 

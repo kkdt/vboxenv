@@ -45,7 +45,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Extracting Gradle to /opt"
-unzip $downloadLocation/gradle-${gradleversion}-all.zip -d /opt
+unzip -qq $downloadLocation/gradle-${gradleversion}-all.zip -d /opt
 
 echo "Creating symbolic link /opt/gradle"
 ln -s /opt/gradle-${gradleversion} /opt/gradle
