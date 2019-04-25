@@ -76,6 +76,7 @@ Add to the `network` attribute a list of host-guest port forwarding configuratio
         { "host": 9001, "guest": 19001 },
         { "host": 9002, "guest": 19002 },
         { "host": 8000, "guest": 3000 },
+        { "host": 8008, "guest": 8080 },
         { "host": 9920, "guest": 8920 }
     ]
 }
@@ -129,7 +130,7 @@ Create a box image of the current state of your virtual machine
 
 4. Execute: `vagrant up template --provision-with file,base-install[,rpms]`
 
-5. Execute: `vagrant package --base template --output kkdt.box`
+5. Execute: `vagrant package --base template --output c7dev.box`
 
 # Vagrant Commands
 
