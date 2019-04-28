@@ -18,9 +18,9 @@ This project uses [geerlingguy](https://app.vagrantup.com/geerlingguy/boxes/cent
 
 4. Install plugins
 
-   - Execute: `vagrant plugin install vagrant-vbguest`
+   - Execute: `vagrant plugin [install|update] vagrant-vbguest`
 
-   - Execute: `vagrant plugin install vagrant-winnfsd`
+   - Execute: `vagrant plugin [install|update] vagrant-winnfsd`
 
 5. Drop a JSON file in `servers` directory with the falling minimum contents (box and unique VM identifier) to use the default VM configurations. More information on the JSON configurations in the following section.
 

@@ -17,3 +17,6 @@ fi
 
 chown -R root:vagrant /opt/apache-archiva*
 chmod -R g+rwx /opt/apache-archiva*
+
+# clean up
+rm -f ${__currentdir}/apache-archiva*

@@ -7,7 +7,7 @@
         "cpus":1,
         "network" : {},
         "jdk": "/Users/thinh/Downloads/jdk-8u201-linux-x64.rpm",
-        "gradleversion": 3.5,
+        "gradleversion": 4.10.2,
         "rpms": [
             "/Users/thinh/Downloads/mysql-community-common-5.7.18-1.el7.x86_64.rpm",
             "/Users/thinh/Downloads/mysql-community-libs-5.7.18-1.el7.x86_64.rpm",

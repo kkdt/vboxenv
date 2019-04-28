@@ -58,5 +58,6 @@ if [ ! -f "${globalsource}" ]; then
     echo "Setting up $globalsource defaults"
     touch $globalsource
     chmod 755 $globalsource
+    echo "export VAGRANTENV=1" >> $globalsource
     echo "export PATH=/usr/local/bin:/opt/bin:$""PATH" >> $globalsource
 fi
