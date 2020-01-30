@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2017 kkdt
+# Copyright 2020 kkdt
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
 # the Software without restriction, including without limitation the rights to use,
@@ -19,13 +19,27 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-version=8
+# ASSUMES NODE IS ALREADY INSTALLED
+
+initial_scope="prototypes"
 if [ -z "$1" ]; then
-  echo "Using default version $version"
+  echo "Using default scope ${initial_scope}"
 else
-  version="$1"
+  initial_scope="$1"
 fi
 
-echo "Install nodejs/npm"
-curl --silent --location https://rpm.nodesource.com/setup_${version}.x | sudo bash -
-sudo yum -y install nodejs
+echo "Installing Bit server"
+npm install bit-bin --global
+
+echo "Turning on Bit analytics reporting"
+sudo -i -u vagrant bit config set analytics_reporting false
+sudo -i -u vagrant bit config set error_reporting false
+
+echo "Initializating Bit directories"
+mkdir -p /opt/bit
+chown vagrant:vagrant /opt/bit
+chmod 755 /opt/bit
+
+sudo -i -u vagrant mkdir -p /opt/bit/${initial_scope}
+cd /opt/bit/${initial_scope}
+sudo -i -u vagrant bit init --bare

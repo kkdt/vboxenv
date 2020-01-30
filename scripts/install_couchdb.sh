@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2017 kkdt
+# Copyright 2020 kkdt
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
 # the Software without restriction, including without limitation the rights to use,
@@ -19,13 +19,19 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-version=8
-if [ -z "$1" ]; then
-  echo "Using default version $version"
-else
-  version="$1"
-fi
+echo "Installing /etc/yum.repos.d/bintray-apache-couchdb-rpm.repo"
 
-echo "Install nodejs/npm"
-curl --silent --location https://rpm.nodesource.com/setup_${version}.x | sudo bash -
-sudo yum -y install nodejs
+tee -a /etc/yum.repos.d/bintray-apache-couchdb-rpm.repo << END
+[bintray--apache-couchdb-rpm]
+name=bintray--apache-couchdb-rpm
+baseurl=http://apache.bintray.com/couchdb-rpm/el\$releasever/\$basearch/
+gpgcheck=0
+repo_gpgcheck=0
+enabled=1
+END
+
+echo "Installing CouchDB"
+yum install couchdb
+
+# wget http://127.0.0.1:5984/_utils/index.html
+# wget http://localhost:5984/_utils/index.html#verifyinstall

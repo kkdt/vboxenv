@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright 2017 kkdt
+# Copyright 2020 kkdt
 # Permission is hereby granted, free of charge, to any person obtaining a copy of
 # this software and associated documentation files (the "Software"), to deal in
 # the Software without restriction, including without limitation the rights to use,
@@ -19,13 +19,13 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-version=8
-if [ -z "$1" ]; then
-  echo "Using default version $version"
-else
-  version="$1"
-fi
+# ASSUMES NODE IS ALREADY INSTALLED
 
-echo "Install nodejs/npm"
-curl --silent --location https://rpm.nodesource.com/setup_${version}.x | sudo bash -
-sudo yum -y install nodejs
+echo "Installing Angular"
+npm install angular -g
+npm install -g @angular/cli
+
+globalsource=/etc/profile.d/$(hostname -s).sh
+touch $globalsource
+chmod 755 $globalsource
+echo "alias ngserve='ng serve --host 0.0.0.0'" >> $globalsource

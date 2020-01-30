@@ -36,7 +36,15 @@ echo "Installing Extra Package for Enterprise Linux (EPEL)"
 sudo yum -y install epel-release
 
 echo "Installing system utilities"
-sudo yum -y install pciutils policycoreutils policycoreutils-python wget unzip mlocate dkms fontconfig gcc-c++
+sudo yum -y install pciutils
+sudo yum -y install policycoreutils
+sudo yum -y install policycoreutils-python
+sudo yum -y install wget
+sudo yum -y install unzip
+sudo yum -y install mlocate
+sudo yum -y install dkms
+sudo yum -y install fontconfig
+sudo yum -y install gcc-c++
 
 yum list installed | grep "mariadb-libs" 2>&1
 if [ $? -eq 0 ]; then

@@ -1,18 +1,15 @@
 {
-    "server": {
-        "box":"geerlingguy/centos7",
-        "id" : "template-gnome",
-        "hostname": "template-gnome",
-        "memory": 1024,
-        "cpus":1,
-        "network" : {},
-        "jdk": "/Users/thinh/Downloads/jdk-8u201-linux-x64.rpm",
-        "gradleversion": 3.5,
-        "git": true,
-        "desktop": {
-            "type":"gnome",
-            "display":true,
-            "install":true
-        }
+  "server": {
+    "box":"geerlingguy/centos7",
+    "id" : "template-gnome",
+    "hostname": "template-gnome",
+    "memory": 1024,
+    "cpus":1,
+    "network" : {},
+    "desktop": {
+      "type":"gnome",
+      "display":true,
+      "install":true
     }
+  }
 }

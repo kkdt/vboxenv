@@ -21,17 +21,18 @@
 
 # Installs to /opt/aws
 # Argument
-#   awszip (optional) location of the awscli-bundle.zip file (default to https://s3.amazonaws.com/aws-cli/awscli-bundle.zip)
+#   AWS_ACCESS_KEY_ID (mandatory)
+#   AWS_SECRET_ACCESS_KEY (mandatory)
+#   AWS_REGION (mandatory)
 #
 
 downloadLocation=$HOME/downloads/aws
 mkdir -p $downloadLocation
 awszip="https://s3.amazonaws.com/aws-cli/awscli-bundle.zip"
 
-if [ -z "$1" ]; then
-  echo "Using default download $awszip"
-else
-  awszip="$1"
+if [ $# -ne 3 ]; then
+  echo "Invalid number of arguments"
+  exit 1
 fi
 
 echo "Downloading AWS CLI"
@@ -52,9 +53,9 @@ source $globalsource
 
 # installing aws credentials
 
-echo "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}" >> $globalsource
-echo "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}" >> $globalsource
-echo "export AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}" >> $globalsource
-echo "export AWS_REGION=${AWS_DEFAULT_REGION}" >> $globalsource
+echo "export AWS_ACCESS_KEY_ID=${1}" >> $globalsource
+echo "export AWS_SECRET_ACCESS_KEY=${2}" >> $globalsource
+echo "export AWS_DEFAULT_REGION=${3}" >> $globalsource
+echo "export AWS_REGION=${3}" >> $globalsource
 
 aws --version

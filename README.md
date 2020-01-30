@@ -40,18 +40,69 @@ This project uses [geerlingguy](https://app.vagrantup.com/geerlingguy/boxes/cent
 
 ```json
 {
-    "server": {
-        "box":"",
-        "id" : "dev01",
-        "hostname" : "dev01",
-        "memory" : 2048,
-        "cpus" : 1,
-        "network" : {},
-        "hosts" : [],
-        "aws" : {},
-        "rpms" : []
-    }
+  "server": {
+    "box":"",
+    "id" : "dev01",
+    "hostname" : "dev01",
+    "memory" : 2048,
+    "cpus" : 1,
+    "network" : {},
+    "hosts" : [],
+    "bootstrap": {},
+    "scripts": [],
+    "files": []
+  }
 }
+```
+
+## Staging Files to Guest
+
+Add to the `files` attribute a list of source-destination data. The source is the full path to the file on the host machine; the destination is full path to the file on the guest. Staged files can be used in your custom `scripts` (below).
+
+```
+"files" : [
+  {
+    "source": "/Users/thinh/Downloads/jdk-8u201-linux-x64.rpm",
+    "destination": "/home/vagrant/rpms/jdk.rpm"
+  },
+  {
+    "source": "/Users/thinh/Downloads/mysql-community-common-5.7.18-1.el7.x86_64.rpm",
+    "destination": "/home/vagrant/rpms/1-mysql-community-common-5.7.18-1.el7.x86_64.rpm"
+  },
+  {
+    "source": "/Users/thinh/Downloads/mysql-community-libs-5.7.18-1.el7.x86_64.rpm",
+    "destination": "/home/vagrant/rpms/2-mysql-community-libs-5.7.18-1.el7.x86_64.rpm"
+  }
+]
+```
+
+## Executing Scripts
+
+Add to the `scripts` attributes a list of scripts/args that are in the current directory using relative path. Scripts will be execute in the order they are listed.
+
+```
+"scripts": [
+  {
+    "file": "scripts/bootstrap.sh",
+    "args": []
+  },
+  {
+    "file": "scripts/install_git.sh",
+    "args": []
+  },
+  {
+    "file": "scripts/install_jdk.sh",
+    "args": ["/home/vagrant/rpms/jdk.rpm"]
+  },
+  {
+    "file": "scripts/install_gradle.sh",
+    "args": ["4.10.2"]
+  },
+  {
+    "file": "scripts/install_aws.sh",
+    "args": [ "AWS_ACCESS_KEY_ID", "AWS_SECRET_ACCESS_KEY", "AWS_DEFAULT_REGION" ]
+  }
+]
 ```
 
 ## Networking
@@ -60,25 +111,25 @@ Add to the `network` attribute a list of host-guest port forwarding configuratio
 
 ```
 "network" : {
-    "type" : "private_network",
-    "ip" : "10.10.1.150",
-    "bridge" : [
-        "eth0",
-        "eth1",
-        "eth2",
-        "eth3",
-        "en1: Thunderbolt 1",
-        "en2: Thunderbolt 1",
-        "en0: Wi-Fi (AirPort)"
-    ],
-    "ports" : [
-        { "host": 9000, "guest": 19000 },
-        { "host": 9001, "guest": 19001 },
-        { "host": 9002, "guest": 19002 },
-        { "host": 8000, "guest": 3000 },
-        { "host": 8008, "guest": 8080 },
-        { "host": 9920, "guest": 8920 }
-    ]
+  "type" : "private_network",
+  "ip" : "10.10.1.150",
+  "bridge" : [
+    "eth0",
+    "eth1",
+    "eth2",
+    "eth3",
+    "en1: Thunderbolt 1",
+    "en2: Thunderbolt 1",
+    "en0: Wi-Fi (AirPort)"
+  ],
+  "ports" : [
+    { "host": 9000, "guest": 19000 },
+    { "host": 9001, "guest": 19001 },
+    { "host": 9002, "guest": 19002 },
+    { "host": 8000, "guest": 3000 },
+    { "host": 8008, "guest": 8080 },
+    { "host": 9920, "guest": 8920 }
+  ]
 }
 ```
 
@@ -93,44 +144,17 @@ Add to the `hosts` attribute a list of other Vagrant virtual machines to connect
 ]
 ```
 
-## AWS Credentials
-
-Include AWS credentials in the JSON configuration and your credentials will be installed as environment variables with the AWS CLI.
-
-```
-"aws": {
-    "accessKey": "....",
-    "accessSecret": "....",
-    "region": "us-east-1"
-}
-```
-
-## Installing RPMs
-
-RPM files listed under the `rpms` attribute will be installed during a Vagrant up in the order they are specified. All files will be placed in the `/tmp` directory in the VM and removed after installation.
-
-```
-"rpms": [
-    "/Users/thinh/Downloads/mysql-community-common-5.7.18-1.el7.x86_64.rpm",
-    "/Users/thinh/Downloads/mysql-community-libs-5.7.18-1.el7.x86_64.rpm",
-    "/Users/thinh/Downloads/mysql-community-client-5.7.18-1.el7.x86_64.rpm",
-    "/Users/thinh/Downloads/mysql-community-server-5.7.18-1.el7.x86_64.rpm"
-]
-```
-
 # Creating the Box Images
 
 Create a box image of the current state of your virtual machine
 
-1. Download the latest Oracle JDK
+1. Use `template.json.install` and copy it to `template.json` to use for the install
 
-2. Use `template.json.install` and copy it to `template.json` to use for the install
+2. Update `template.json` (i.e. jdk location, gradle version, etc.)
 
-3. Update `template.json` (i.e. jdk location, gradle version, etc.)
+3. Execute: `vagrant up template`
 
-4. Execute: `vagrant up template --provision-with file,base-install[,rpms]`
-
-5. Execute: `vagrant package --base template --output c7dev.box`
+4. Execute: `vagrant package --base template --output c7dev.box`
 
 # Vagrant Commands
 
