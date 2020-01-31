@@ -53,6 +53,9 @@ rabbitmqctl add_vhost $1
 rabbitmqctl set_permissions -p $1 guest ".*" ".*" ".*"
 echo "Creating initial set of exchanges"
 
+systemctl rabbitmq-server.service
+systemctl rabbitmq-server.service
+
 echo "Log into the RabbitMQ Management Console using guest/guest as the credentials"
 
 # Start it as a service to /usr/lib/systemd/system

@@ -48,7 +48,6 @@ This project uses [geerlingguy](https://app.vagrantup.com/geerlingguy/boxes/cent
     "cpus" : 1,
     "network" : {},
     "hosts" : [],
-    "bootstrap": {},
     "scripts": [],
     "files": []
   }

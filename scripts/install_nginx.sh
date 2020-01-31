@@ -19,28 +19,42 @@
 # OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-echo "Installing /etc/yum.repos.d/bintray-apache-couchdb-rpm.repo"
 
-tee -a /etc/yum.repos.d/bintray-apache-couchdb-rpm.repo << END
-[bintray--apache-couchdb-rpm]
-name=bintray--apache-couchdb-rpm
-baseurl=http://apache.bintray.com/couchdb-rpm/el\$releasever/\$basearch/
-gpgcheck=0
-repo_gpgcheck=0
-enabled=1
-END
-
-echo "Installing CouchDB"
-yum install -y couchdb
-
-systemctl enable couchdb.service
-systemctl start couchdb.service
-
-if [ -f /opt/couchdb/etc/local.ini ]; then
-  cat /opt/couchdb/etc/local.ini
+port=80
+if [ ! -z "${1}" ]; then
+  port=${1}
 fi
 
-echo "CouchDB will be listening on port 5984"
+echo "Installing /etc/yum.repos.d/nginx.repo"
 
-# wget http://127.0.0.1:5984/_utils/index.html
-# wget http://localhost:5984/_utils/index.html#verifyinstall
+tee -a /etc/yum.repos.d/nginx.repo << END
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/centos/\$releasever/\$basearch/ gpgcheck=0 enabled=1
+END
+
+echo "Installing nginx"
+yum install -y nginx
+
+if [ -f /etc/nginx/conf.d/sysmon.conf ]; then
+  cat /etc/nginx/conf.d/sysmon.conf
+else
+  tee -a /etc/nginx/conf.d/sysmon.conf << END
+server {
+    listen ${port};
+    server_name ${HOSTNAME};
+
+# Example reverse proxy
+#    location \/ {
+#        proxy_set_header   X-Forwarded-For $remote_addr;
+#        proxy_set_header   Host $http_host;
+#        proxy_pass         http://${HOSTNAME}:8080;
+#    }
+
+}
+END
+fi
+
+
+systemctl enable nginx.service
+systemctl start nginx.service
