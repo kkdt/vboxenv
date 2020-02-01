@@ -27,7 +27,7 @@ fi
 echo "Installing RabbitMQ"
 sudo yum -y install rabbitmq-server
 
-echo "Enabling RabbitMQ Management Plugin"
+echo "Enabling RabbitMQ Management Plugin (port 15672)"
 rabbitmq-plugins enable rabbitmq_management
 
 # firewall is off for Vagrant
@@ -53,10 +53,9 @@ rabbitmqctl add_vhost $1
 rabbitmqctl set_permissions -p $1 guest ".*" ".*" ".*"
 echo "Creating initial set of exchanges"
 
-systemctl rabbitmq-server.service
-systemctl rabbitmq-server.service
+systemctl enable rabbitmq-server.service
+systemctl start rabbitmq-server.service
 
-echo "Log into the RabbitMQ Management Console using guest/guest as the credentials"
+echo "Log into the RabbitMQ Management Console (port 15672) using guest/guest as the credentials"
 
 # Start it as a service to /usr/lib/systemd/system
-# https://github.com/rabbitmq/rabbitmq-server/blob/master/docs/rabbitmq-server.service.example

@@ -36,20 +36,51 @@ END
 echo "Installing nginx"
 yum install -y nginx
 
-if [ -f /etc/nginx/conf.d/sysmon.conf ]; then
-  cat /etc/nginx/conf.d/sysmon.conf
+if [ -f /etc/nginx/conf.d/default.conf ]; then
+  cat /etc/nginx/conf.d/default.conf
 else
-  tee -a /etc/nginx/conf.d/sysmon.conf << END
+  tee -a /etc/nginx/conf.d/default.conf << END
+
+# rabbitmq
+#upstream rabbitmq {
+#  server 127.0.0.1:15672;
+#}
+
+# couchdb
+#upstream couchdb {
+#  server 127.0.0.1:5984;
+#}
+
 server {
     listen ${port};
     server_name ${HOSTNAME};
 
 # Example reverse proxy
-#    location \/ {
-#        proxy_set_header   X-Forwarded-For $remote_addr;
-#        proxy_set_header   Host $http_host;
-#        proxy_pass         http://${HOSTNAME}:8080;
+#    location / {
+#        proxy_set_header   X-Forwarded-For \$remote_addr;
+#        proxy_set_header   Host \$http_host;
+#        proxy_pass         http://localhost:8080;
 #    }
+
+#  location /rabbitmq/ {
+#    rewrite /rabbitmq/(.*)\$ /\$1 break;
+#    proxy_set_header X-Real-IP \$remote_addr;
+#    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+#    proxy_set_header Host \$http_host;
+#    proxy_set_header X-NginX-Proxy true;
+#    proxy_pass http://rabbitmq;
+#    proxy_redirect off;
+#  }
+
+#  location /couchdb/ {
+#    rewrite /couchdb/(.*)\$ /\$1 break;
+#    proxy_set_header X-Real-IP \$remote_addr;
+#    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+#    proxy_set_header Host \$http_host;
+#    proxy_set_header X-NginX-Proxy true;
+#    proxy_pass http://couchdb;
+#    proxy_redirect off;
+#  }
 
 }
 END

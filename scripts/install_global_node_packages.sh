@@ -31,3 +31,4 @@ npm -g install connect
 npm -g install serve-static
 npm -g install react-native-cli
 npm -g install expo-cli
+npm -g install express
