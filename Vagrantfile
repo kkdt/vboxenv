@@ -124,6 +124,13 @@ Vagrant.configure("2") do |config|
           SHELL
       end
 
+      if !aws.nil? then
+          accessKey = aws.has_key?('accessKey') ? aws['accessKey'] : ""
+          accessSecret = aws.has_key?('accessSecret') ? aws['accessSecret'] : ""
+          awsRegion = aws.has_key?('region') ? aws['region'] : ""
+          server.vm.provision "aws", type: "shell", path: "scripts/install_aws.sh", env: { "AWS_ACCESS_KEY_ID" => "#{accessKey}", "AWS_SECRET_ACCESS_KEY" => "#{accessSecret}", "AWS_DEFAULT_REGION" => "#{awsRegion}"}
+      end
+
       # server.vm.provision "base-install", run: "never", type: "shell", env: { "VAGRANT_GRADLE_VERSION" => "#{gradleversion}" }, args: [], inline: <<-SHELL
       #     if [ -f "/home/vagrant/jdk.rpm" ]; then
       #         /bin/bash /vagrant/scripts/install_jdk.sh "/home/vagrant/jdk.rpm"
