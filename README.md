@@ -49,8 +49,7 @@ This project uses [geerlingguy](https://app.vagrantup.com/geerlingguy/boxes/cent
     "network" : {},
     "hosts" : [],
     "scripts": [],
-    "files": [],
-    "aws": {}
+    "files": []
   }
 }
 ```
@@ -142,18 +141,6 @@ Add to the `hosts` attribute a list of other Vagrant virtual machines to connect
     {"hostname":"qrmi2", "ip":"10.10.1.2"},
     {"hostname":"qrmi3", "ip":"10.10.1.3"}
 ]
-```
-
-## AWS Credentials
-
-Include AWS credentials in the JSON configuration and your credentials will be installed as environment variables with the AWS CLI.
-
-```
-"aws": {
-    "accessKey": "....",
-    "accessSecret": "....",
-    "region": "us-east-1"
-}
 ```
 
 # Creating the Box Images

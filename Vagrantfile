@@ -77,9 +77,7 @@ Vagrant.configure("2") do |config|
     desktop = json.has_key?("desktop") ? json["desktop"] : nil
     gui = !desktop.nil? && desktop.has_key?("display") ? desktop['display'] : false
     desktop_type = !desktop.nil? && desktop.has_key?("type") ? desktop['type'] : "gnome"
-    aws = json.has_key?("aws") ? json["aws"] : nil
     hosts = json.has_key?("hosts") ? json["hosts"] : []
-    bootstrap = json.has_key?("bootstrap") ? json["bootstrap"] : nil
     files = json.has_key?("files") ? json["files"] : []
     scripts = json.has_key?("scripts") ? json["scripts"] : []
 
@@ -122,13 +120,6 @@ Vagrant.configure("2") do |config|
           server.vm.provision "hosts", type: "shell", args: [ hostname, ip ], inline: <<-SHELL
               echo "$2 $1 $1" >> /etc/hosts
           SHELL
-      end
-
-      if !aws.nil? then
-          accessKey = aws.has_key?('accessKey') ? aws['accessKey'] : ""
-          accessSecret = aws.has_key?('accessSecret') ? aws['accessSecret'] : ""
-          awsRegion = aws.has_key?('region') ? aws['region'] : ""
-          server.vm.provision "aws", type: "shell", path: "scripts/install_aws.sh", env: { "AWS_ACCESS_KEY_ID" => "#{accessKey}", "AWS_SECRET_ACCESS_KEY" => "#{accessSecret}", "AWS_DEFAULT_REGION" => "#{awsRegion}"}
       end
 
       # server.vm.provision "base-install", run: "never", type: "shell", env: { "VAGRANT_GRADLE_VERSION" => "#{gradleversion}" }, args: [], inline: <<-SHELL
