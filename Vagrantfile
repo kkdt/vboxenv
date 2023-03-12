@@ -30,7 +30,7 @@ Vagrant.configure("2") do |config|
   puts "---------------------------------"
   puts "Vagrant Sandbox"
   puts "---------------------------------"
-    puts ""
+  puts ""
 
   config.ssh.forward_x11 = true
   config.ssh.insert_key = false
@@ -70,13 +70,12 @@ Vagrant.configure("2") do |config|
   Dir.glob('servers/*.json') do |file|
     json = (JSON.parse(File.read(file)))['server']
     id = json.has_key?("id") ? json["id"] : "vagrant"
-    network = hostname = json.has_key?("network") ? json["network"] : {}
+    network = json.has_key?("network") ? json["network"] : {}
     hostname = json.has_key?("hostname") ? json["hostname"] : "vagrant"
     memory = json.has_key?("memory") ? json["memory"] : 512
     cpus = json.has_key?("cpus") ? json["cpus"] : 1
     desktop = json.has_key?("desktop") ? json["desktop"] : nil
     gui = !desktop.nil? && desktop.has_key?("display") ? desktop['display'] : false
-    desktop_type = !desktop.nil? && desktop.has_key?("type") ? desktop['type'] : "gnome"
     hosts = json.has_key?("hosts") ? json["hosts"] : []
     files = json.has_key?("files") ? json["files"] : []
     scripts = json.has_key?("scripts") ? json["scripts"] : []
@@ -114,14 +113,6 @@ Vagrant.configure("2") do |config|
           end
       end
 
-      hosts.each do |h|
-          hostname = h["hostname"]
-          ip = h["ip"]
-          server.vm.provision "hosts", type: "shell", args: [ hostname, ip ], inline: <<-SHELL
-              echo "$2 $1 $1" >> /etc/hosts
-          SHELL
-      end
-
       # server.vm.provision "base-install", run: "never", type: "shell", env: { "VAGRANT_GRADLE_VERSION" => "#{gradleversion}" }, args: [], inline: <<-SHELL
       #     if [ -f "/home/vagrant/jdk.rpm" ]; then
       #         /bin/bash /vagrant/scripts/install_jdk.sh "/home/vagrant/jdk.rpm"
@@ -145,9 +136,9 @@ Vagrant.configure("2") do |config|
         server.vm.provision :shell, path: f["file"], args: f["args"]
       end
 
-      if !desktop.nil? && desktop["install"] == true then
-          server.vm.provision "desktop", type: "shell", path: "scripts/install_desktop.sh", args: [ "#{desktop_type}" ]
-      end
+      server.vm.provision "hosts", type: "shell", args: [ hostname, network['ip'] ], inline: <<-SHELL
+        echo "$2 $1 $1" >> /etc/hosts
+      SHELL
     end
   end
 
