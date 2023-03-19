@@ -26,12 +26,22 @@
 # backwards compatibility). Please don't change it unless you know what
 # you're doing.
 Vagrant.configure("2") do |config|
+  vboxversion = VagrantPlugins::ProviderVirtualBox::Driver::Meta.new.version
+
   puts "---------------------------------"
-  puts "Vagrant Sandbox"
+  puts "Development Sandbox"
+  if Vagrant::Util::Platform.windows?
+    puts "Windows"
+  elsif Vagrant::Util::Platform.linux?
+    puts "Linux"
+  elsif Vagrant::Util::Platform.darwin?
+    puts "Mac/Darwin"
+  end
+  puts "VirtualBox #{vboxversion}"
   puts "---------------------------------"
   puts ""
 
-  Dir.glob('servers/*.json') do |file|
+  Dir.glob('servers/local/*.json') do |file|
     json = (JSON.parse(File.read(file)))['server']
     box = json["box"]
     id = json.has_key?("id") ? json["id"] : "vagrant"
@@ -41,6 +51,7 @@ Vagrant.configure("2") do |config|
     gui = json["gui"]
     vram = json.has_key?("vram") ? json["vram"] : nil
     acceleration = json.has_key?("acceleration") ? json["acceleration"] : nil
+    update_vbguest = json.has_key?("update_vbguest") ? json["update_vbguest"] : false
 
     config.vm.define id do |server|
       server.vm.box = box
@@ -63,6 +74,11 @@ Vagrant.configure("2") do |config|
         if !acceleration.nil? then
           vb.customize ["modifyvm", id, "--paravirtprovider", acceleration]
         end
+      end
+
+      # guest additions
+      if Vagrant.has_plugin?("vagrant-vbguest")
+        server.vbguest.auto_update = update_vbguest
       end
 
       # files
@@ -106,5 +122,13 @@ Vagrant.configure("2") do |config|
       end
     end
   end
+
+  # Shared drive with host/guest
+  if Vagrant::Util::Platform.windows?
+    config.vm.synced_folder ENV['USERPROFILE'], "/shared", :mount_options => ["rw"]
+  else
+    config.vm.synced_folder ENV['HOME'], "/shared", :mount_options => ["rw"]
+  end
+
 
 end

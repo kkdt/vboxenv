@@ -18,7 +18,9 @@
 
    - Execute: `vagrant plugin [install|update] vagrant-winnfsd`
 
-1. Create a JSON file in `servers` directory and Vagrant will process it to create and provision the virtual machine
+1. Copy [centos7.json](servers/centos7.json) to `servers/local/centos7.json` and Vagrant will process it to create and 
+   provision the virtual machine
+   - This configuration uses [geerlingguy](https://app.vagrantup.com/geerlingguy/boxes/centos7) CentOS boxes
 
 ## JSON Configurations
 
@@ -27,13 +29,14 @@
 ```json
 {
   "server": {
-    "box": "dev8",
-    "id" : "dev8-local",
-    "hostname": "dev8",
+    "box": "geerlingguy/centos7",
+    "id" : "centos7",
+    "hostname": "centos7",
     "memory": 2048,
     "cpus": 1,
     "vram": 8,
     "acceleration": "default|hyperv|kvm|legacy|minimal",
+    "update_vbguest": true,
     "network" : [],
     "files": [],
     "scripts": []
@@ -58,6 +61,8 @@ VirtualBox configurations can be set via JSON for the virtual machine.
 1. `vram`: Video memory in MB
 
 1. `acceleration`: VirtualBox acceleration option
+
+1. `update_vbguest`: Set to true to update Guest Additions if plugin is available
 
 ### Staging Files to Guest
 
@@ -125,3 +130,10 @@ Optional `id` attribute.
 - `vagrant box add c7dev c7dev.box` - Other [Box](https://www.vagrantup.com/docs/cli/box.html) commands
 
 - `vagrant package --base template --output c7dev.box`
+
+## MacBook
+
+When Mac updates the OS to a new version or when installing a new version of VirtualBox,
+
+- Oracle VirtualBox must be allowed in "Privacy and Security" settints
+- Rebuild all Vagrant plugins
