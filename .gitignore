@@ -5,5 +5,3 @@
 .project
 .classpath
 *.iml
-
-servers/h01.json
