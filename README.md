@@ -31,7 +31,8 @@
   "server": {
     "box": "geerlingguy/centos7",
     "id" : "centos7",
-    "hostname": "centos7",
+    "hostname": "centos7", 
+    "gui": false,
     "memory": 2048,
     "cpus": 1,
     "vram": 8,
@@ -47,6 +48,8 @@
 ### VirtualBox Settings
 
 VirtualBox configurations can be set via JSON for the virtual machine.
+
+1. `box`: Vagrant box identifier
 
 1. `id`: VirtualBox virtual machine identifier
 
@@ -106,10 +109,26 @@ Add to the `scripts` attributes a list of scripts/args that are in the current d
 
 Add to the `network` attribute a list of host-guest port forwarding configurations, network type, etc.
 
-**NAT Network**
+**NAT**
 
 ```
 "network" : []
+```
+
+**Private Network (DHCP)**
+
+```
+"network" : [
+  { "type": "private_network"}
+]
+```
+
+**Private Network (Static IP)**
+
+```
+"network" : [
+  { "type": "private_network", "ip": "192.168.56.101" }
+]
 ```
 
 **Port Forward**
