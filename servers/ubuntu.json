@@ -1,0 +1,14 @@
+{
+  "server": {
+    "box": "ubuntu/focal64",
+    "box_version": "20220511.0.0",
+    "id": "ubuntu-local",
+    "hostname": "ubuntu-focal64",
+    "memory": "2048",
+    "cpus": 2,
+    "gui": false,
+    "update_vbguest": true,
+    "network": [],
+    "scripts": []
+  }
+}
