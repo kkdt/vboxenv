@@ -52,6 +52,8 @@ Vagrant.configure("2") do |config|
     vram = json.has_key?("vram") ? json["vram"] : nil
     acceleration = json.has_key?("acceleration") ? json["acceleration"] : nil
     update_vbguest = json.has_key?("update_vbguest") ? json["update_vbguest"] : false
+    forward_x11 = json.has_key?("forward_x11") ? json["forward_x11"] : false
+    shared_homedir = json.has_key?("shared_homedir") ? json["shared_homedir"] : false
 
     config.vm.define id do |server|
       server.vm.box = box
@@ -59,6 +61,12 @@ Vagrant.configure("2") do |config|
         server.vm.hostname = hostname
       end
       server.vm.define id
+
+      if forward_x11 then
+        server.ssh.forward_agent = true
+        server.ssh.forward_x11 = true
+      end
+
 
       # VirtualBox settings
       server.vm.provider "virtualbox" do |vb|
@@ -120,15 +128,23 @@ Vagrant.configure("2") do |config|
           args: item["args"],
           upload_path: item['upload_path']
       end
+
+      # shared folders
+      shared_folders = json.has_key?("shared_folders") ? json["shared_folders"] : []
+      shared_folders.each do |item|
+        server.vm.synced_folder item["host"], item["guest"], :mount_options => item["options"]
+      end
+
+      # Shared drive with host/guest
+      if shared_homedir then
+        if Vagrant::Util::Platform.windows?
+          server.vm.synced_folder ENV['USERPROFILE'], "/shared", :mount_options => ["rw"]
+        else
+          server.vm.synced_folder ENV['HOME'], "/shared", :mount_options => ["rw"]
+        end
+      end
+
     end
   end
-
-  # Shared drive with host/guest
-  if Vagrant::Util::Platform.windows?
-    config.vm.synced_folder ENV['USERPROFILE'], "/shared", :mount_options => ["rw"]
-  else
-    config.vm.synced_folder ENV['HOME'], "/shared", :mount_options => ["rw"]
-  end
-
 
 end

@@ -7,8 +7,13 @@
     "memory": "2048",
     "cpus": 2,
     "gui": false,
+    "forward_x11": true,
     "update_vbguest": true,
     "network": [],
-    "scripts": []
+    "scripts": [],
+    "shared_homedir": false,
+    "shared_folders": [
+      { "host": "/Users/thinh/Development", "guest": "/workspace", "options": ["rw"] }
+    ]
   }
 }
