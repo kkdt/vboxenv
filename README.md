@@ -1,4 +1,4 @@
-# Vagrant Sandbox
+# vboxenv
 
 > This project is used to build out personal development sandboxes.
 
@@ -28,7 +28,6 @@
 
 ```json
 {
-  "server": {
     "box": "geerlingguy/centos7",
     "id" : "centos7",
     "hostname": "centos7", 
@@ -41,7 +40,6 @@
     "network" : [],
     "files": [],
     "scripts": []
-  }
 }
 ```
 

@@ -27,23 +27,34 @@
 # you're doing.
 Vagrant.configure("2") do |config|
   vboxversion = VagrantPlugins::ProviderVirtualBox::Driver::Meta.new.version
+  vboxenvs = 'servers/local/*json'
 
   puts "---------------------------------"
-  puts "Development Sandbox"
   if Vagrant::Util::Platform.windows?
-    puts "Windows"
+    puts "INFO: Windows host"
   elsif Vagrant::Util::Platform.linux?
-    puts "Linux"
+    puts "INFO: Linux host"
   elsif Vagrant::Util::Platform.darwin?
-    puts "Mac/Darwin"
+    puts "INFO: Mac/Darwin host"
   end
-  puts "VirtualBox #{vboxversion}"
-  puts "---------------------------------"
-  puts ""
+  puts "INFO: VirtualBox #{vboxversion}"
 
-  Dir.glob('servers/local/*.json') do |file|
-    json = (JSON.parse(File.read(file)))['server']
+  if ENV["VBOXENV_HOME"] != nil && ENV["VBOXENV_HOME"] != ""
+    puts "INFO: VBOXENV_HOME is set to #{ENV['VBOXENV_HOME']} (on host) for JSON configurations"
+    vboxenvs = ENV["VBOXENV_HOME"] + "/*.json"
+  end
+  
+  puts "---------------------------------"
+
+  if Dir[vboxenvs].length == 0
+    raise "ERROR: Cannot locate any VirtualBox JSON configuration .json files in the #{vboxenvs} directory"
+  end
+
+  puts ""
+  Dir.glob([vboxenvs]) do |file|
+    json = (JSON.parse(File.read(file)))
     box = json["box"]
+    box_version = json.has_key?("box_version") ? json["box_version"] : nil
     id = json.has_key?("id") ? json["id"] : "vagrant"
     hostname = json.has_key?("hostname") ? json["hostname"] : nil
     memory = json["memory"]
@@ -53,20 +64,24 @@ Vagrant.configure("2") do |config|
     acceleration = json.has_key?("acceleration") ? json["acceleration"] : nil
     update_vbguest = json.has_key?("update_vbguest") ? json["update_vbguest"] : false
     forward_x11 = json.has_key?("forward_x11") ? json["forward_x11"] : false
-    shared_homedir = json.has_key?("shared_homedir") ? json["shared_homedir"] : false
+    boot_timeout = json.has_key?("boot_timeout") ? json["boot_timeout"] : 180
 
     config.vm.define id do |server|
+      server.vm.define id
       server.vm.box = box
+
+      if !box_version.nil? then
+        server.vm.box_version = box_version
+      end
+
       if !hostname.nil? then
         server.vm.hostname = hostname
       end
-      server.vm.define id
 
       if forward_x11 then
         server.ssh.forward_agent = true
         server.ssh.forward_x11 = true
       end
-
 
       # VirtualBox settings
       server.vm.provider "virtualbox" do |vb|
@@ -134,16 +149,6 @@ Vagrant.configure("2") do |config|
       shared_folders.each do |item|
         server.vm.synced_folder item["host"], item["guest"], :mount_options => item["options"]
       end
-
-      # Shared drive with host/guest
-      if shared_homedir then
-        if Vagrant::Util::Platform.windows?
-          server.vm.synced_folder ENV['USERPROFILE'], "/shared", :mount_options => ["rw"]
-        else
-          server.vm.synced_folder ENV['HOME'], "/shared", :mount_options => ["rw"]
-        end
-      end
-
     end
   end
 

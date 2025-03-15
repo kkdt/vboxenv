@@ -1,5 +1,4 @@
 {
-  "server": {
     "box": "ubuntu/focal64",
     "box_version": "20220511.0.0",
     "id": "ubuntu-local",
@@ -11,9 +10,7 @@
     "update_vbguest": true,
     "network": [],
     "scripts": [],
-    "shared_homedir": false,
     "shared_folders": [
-      { "host": "/Users/thinh/Development", "guest": "/workspace", "options": ["rw"] }
+        { "host": "/home/thinh", "guest": "/workspace", "options": ["rw"] }
     ]
-  }
 }

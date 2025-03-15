@@ -1,5 +1,4 @@
 {
-  "server": {
     "box": "geerlingguy/centos7",
     "id" : "centos7",
     "hostname": "centos7",
@@ -9,5 +8,4 @@
     "network" : [],
     "files": [],
     "scripts": []
-  }
 }
