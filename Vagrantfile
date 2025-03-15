@@ -65,6 +65,7 @@ Vagrant.configure("2") do |config|
     update_vbguest = json.has_key?("update_vbguest") ? json["update_vbguest"] : false
     forward_x11 = json.has_key?("forward_x11") ? json["forward_x11"] : false
     boot_timeout = json.has_key?("boot_timeout") ? json["boot_timeout"] : 180
+    nested_virt = json.has_key?("nested_virt") ? json["nested_virt"] : false
 
     config.vm.define id do |server|
       server.vm.define id
@@ -96,6 +97,14 @@ Vagrant.configure("2") do |config|
 
         if !acceleration.nil? then
           vb.customize ["modifyvm", id, "--paravirtprovider", acceleration]
+        end
+
+        if !acceleration.nil? then
+            vb.customize ["modifyvm", id, "--paravirtprovider", acceleration]
+        end
+
+        if nested_virt then
+            vb.customize ["modifyvm", id, "--nested-hw-virt", "on"]
         end
       end
 

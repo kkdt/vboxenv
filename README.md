@@ -65,6 +65,8 @@ VirtualBox configurations can be set via JSON for the virtual machine.
 
 1. `update_vbguest`: Set to true to update Guest Additions if plugin is available
 
+1. `nested_virt`: true|false for nested virtualization
+
 ### Staging Files to Guest
 
 Add to the `files` attribute a list of source-destination data. The source is the full path to the file on the host machine;
@@ -147,6 +149,8 @@ Optional `id` attribute.
 - `vagrant box add c7dev c7dev.box` - Other [Box](https://www.vagrantup.com/docs/cli/box.html) commands
 
 - `vagrant package --base template --output c7dev.box`
+
+- `VBoxManage modifyvm <id> --nested-hw-virt on` - Enable nested virtualization
 
 ## MacBook
 
