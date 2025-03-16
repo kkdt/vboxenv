@@ -152,6 +152,18 @@ Optional `id` attribute.
 
 - `VBoxManage modifyvm <id> --nested-hw-virt on` - Enable nested virtualization
 
+- Create network adapter
+
+    ```
+    sudo touch /etc/vbox/networks.conf
+    sudo chmo 755 /etc/vbox/networks.conf
+    cat /etc/vbox/networks.conf
+    * 10.15.0.1/16
+
+    VBoxManage hostonlyif create
+    VBoxManage hostonlyif ipconfig vboxnet1 --ip=10.15.0.1 --netmask=255.255.0.0
+    ```
+
 ## MacBook
 
 When Mac updates the OS to a new version or when installing a new version of VirtualBox,
